@@ -1,0 +1,22 @@
+# Core agent framework
+strands-agents>=1.0.0
+strands-agents-tools>=0.1.0
+
+# Amazon Bedrock AgentCore SDK (Runtime + Memory helpers)
+bedrock-agentcore>=0.1.0
+
+# AWS SDK
+boto3>=1.40.0
+
+# Web backend
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.7.0
+
+# Config + env
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# Observability (OpenTelemetry / ADOT) for non-runtime local instrumentation
+aws-opentelemetry-distro>=0.10.0
+opentelemetry-instrumentation-fastapi>=0.48b0

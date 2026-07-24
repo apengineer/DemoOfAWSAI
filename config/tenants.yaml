@@ -1,0 +1,42 @@
+# =====================================================================
+# Tenants, users and branding (config-driven & reusable)
+# ---------------------------------------------------------------------
+# The demo is multi-tenant to showcase SaaS isolation. Each "tenant" is a
+# fictional organisation that uses the onboarding platform; each tenant
+# has a set of fictional end users being onboarded.
+#
+# Tenant isolation in AgentCore:
+#   - Runtime: each (tenant,user,attempt) maps to its own runtimeSessionId
+#     => its own isolated microVM.
+#   - Memory : actorId = "<tenant_id>#<user_id>" and every long-term
+#     namespace is scoped by that actorId, so one tenant can never read
+#     another tenant's memory.
+#
+# All names below are fictional. Re-skin by editing "branding" only.
+# =====================================================================
+
+branding:
+  product_name: "Identity Onboarding Studio"
+  tagline: "Agentic eKYC powered by Amazon Bedrock AgentCore"
+  primary_color: "#008c95"
+  accent_color: "#2e9e7b"
+  logo_text: "IDV"
+
+tenants:
+  - id: northbank
+    name: "NorthBank (fictional retail bank)"
+    color: "#008c95"
+    users:
+      - id: alice
+        name: "Alice Nguyen"
+      - id: bob
+        name: "Bob Carter"
+
+  - id: southtrust
+    name: "SouthTrust (fictional digital wallet)"
+    color: "#0b6b8f"
+    users:
+      - id: carla
+        name: "Carla Diaz"
+      - id: dan
+        name: "Dan Olsson"

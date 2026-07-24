@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.memory_store/
+.DS_Store
+*.egg-info/
+.bedrock_agentcore.yaml
+dependencies.*

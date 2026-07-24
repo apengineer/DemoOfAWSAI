@@ -1,0 +1,60 @@
+# =====================================================================
+# Application configuration
+# ---------------------------------------------------------------------
+# Everything here can be overridden by environment variables (see
+# backend/config.py). This file is intentionally vendor-neutral so the
+# same demo can be reused for any customer by editing config only.
+# =====================================================================
+
+aws:
+  region: us-east-1
+  # Bedrock model used by the Strands agent.
+  # NOTE: Claude 3.5 Sonnet is legacy/unavailable on this account, so the
+  # default is Claude Sonnet 4.5. Override with BEDROCK_MODEL_ID if needed.
+  model_id: us.anthropic.claude-sonnet-4-5-20250929-v1:0
+  # Cap output tokens explicitly (avoids over-reserving Bedrock quota).
+  max_tokens: 1024
+  temperature: 0.3
+
+memory:
+  # Which memory backend to use:
+  #   agentcore -> Amazon Bedrock AgentCore Memory (real AWS service)
+  #   local     -> file-based fallback (no AWS Memory resource required)
+  #   auto      -> use agentcore if a memory id is resolvable, else local
+  backend: auto
+  # AgentCore Memory resource id. Leave blank and run
+  # scripts/provision_memory.py to create one (it prints the id, which you
+  # then set here or via the AGENTCORE_MEMORY_ID env var).
+  memory_id: "EkycOnboardingMemory-<id>"
+  # Friendly name used when provisioning the memory resource.
+  memory_name: EkycOnboardingMemory
+  # Short-term event retention (days).
+  event_expiry_days: 90
+  # Long-term strategy namespace templates. Only {actorId}, {sessionId} and
+  # {strategyId} are valid template variables. actorId is "<tenant>#<user>",
+  # so tenant isolation is inherent in every namespace path.
+  namespaces:
+    summary: "/ekyc/summaries/{actorId}/{sessionId}/"
+    preferences: "/ekyc/preferences/{actorId}/"
+    semantic: "/ekyc/facts/{actorId}/"
+  # Local fallback storage directory (used only by the local backend).
+  local_store_dir: ".memory_store"
+
+observability:
+  # In-app span recorder powers the live "Observability" panel in the UI.
+  enabled: true
+  # When true, also configure OpenTelemetry/ADOT export (used when deployed
+  # to AgentCore Runtime or when running with the OTEL distro locally).
+  otel_export: false
+
+agent:
+  # How the website runs the agent:
+  #   local   -> run the Strands agent in-process (default)
+  #   runtime -> invoke the deployed AgentCore Runtime via its ARN
+  # Override with AGENT_MODE / AGENTCORE_RUNTIME_ARN env vars.
+  mode: local
+  runtime_arn: ""
+
+server:
+  host: 127.0.0.1
+  port: 8080

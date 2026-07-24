@@ -1,0 +1,71 @@
+{
+  "_comment": "Least-privilege execution role for the eKYC AgentCore Runtime. Replace <ACCOUNT_ID>, <REGION> and <MEMORY_ID>. Attach the policy below to a role whose trust policy allows bedrock-agentcore.amazonaws.com (with SourceAccount/SourceArn conditions to prevent confused-deputy).",
+  "trust_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": { "Service": "bedrock-agentcore.amazonaws.com" },
+        "Action": "sts:AssumeRole",
+        "Condition": {
+          "StringEquals": { "aws:SourceAccount": "<ACCOUNT_ID>" },
+          "ArnLike": { "aws:SourceArn": "arn:aws:bedrock-agentcore:<REGION>:<ACCOUNT_ID>:*" }
+        }
+      }
+    ]
+  },
+  "permissions_policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "InvokeBedrockModels",
+        "Effect": "Allow",
+        "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream", "bedrock:Converse", "bedrock:ConverseStream"],
+        "Resource": [
+          "arn:aws:bedrock:*::foundation-model/anthropic.*",
+          "arn:aws:bedrock:<REGION>:<ACCOUNT_ID>:inference-profile/*"
+        ]
+      },
+      {
+        "Sid": "AgentCoreMemoryScoped",
+        "Effect": "Allow",
+        "Action": [
+          "bedrock-agentcore:CreateEvent",
+          "bedrock-agentcore:ListEvents",
+          "bedrock-agentcore:ListSessions",
+          "bedrock-agentcore:RetrieveMemoryRecords",
+          "bedrock-agentcore:GetMemory"
+        ],
+        "Resource": "arn:aws:bedrock-agentcore:<REGION>:<ACCOUNT_ID>:memory/<MEMORY_ID>"
+      },
+      {
+        "Sid": "ObservabilityLogsAndTraces",
+        "Effect": "Allow",
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "xray:PutTraceSegments",
+          "xray:PutSpans",
+          "cloudwatch:PutMetricData"
+        ],
+        "Resource": "*"
+      }
+    ]
+  },
+  "tenant_isolation_example": {
+    "_comment": "Optional: hard-enforce per-tenant memory isolation by scoping RetrieveMemoryRecords to a namespacePath. Use one role per tenant, or session-tagged credentials, to bind a session to a single tenant's namespace.",
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "TenantScopedRetrieve",
+        "Effect": "Allow",
+        "Action": ["bedrock-agentcore:RetrieveMemoryRecords"],
+        "Resource": "arn:aws:bedrock-agentcore:<REGION>:<ACCOUNT_ID>:memory/<MEMORY_ID>",
+        "Condition": {
+          "StringLike": { "bedrock-agentcore:namespacePath": "/ekyc/facts/northbank__*" }
+        }
+      }
+    ]
+  }
+}

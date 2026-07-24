@@ -1,0 +1,72 @@
+# =====================================================================
+# eKYC onboarding flow definition (config-driven & reusable)
+# ---------------------------------------------------------------------
+# The agent is told about these steps and the tools that advance them.
+# To repurpose the demo for a different journey, edit this file only.
+# Each step maps to a verification tool the agent can call. Tools return
+# mock results so the demo runs without any real IDV provider.
+# =====================================================================
+
+flow:
+  id: ekyc_individual_onboarding
+  name: Individual eKYC Onboarding
+  assurance_level: IAL2
+  description: >
+    Remote identity proofing journey for onboarding an individual customer:
+    collect personal details, verify a government ID document, capture a
+    selfie with liveness detection, match the selfie to the document, run a
+    sanctions/PEP screening, then make an onboarding decision.
+
+  steps:
+    - id: collect_details
+      title: Collect personal details
+      tool: collect_personal_details
+      collects: [full_name, date_of_birth, country]
+      description: Gather the applicant's basic identifying information.
+
+    - id: document_verification
+      title: Verify ID document
+      tool: verify_document
+      collects: [document_type]
+      description: >
+        Authenticate a government-issued ID (passport, driver licence or
+        national ID) and extract its data.
+
+    - id: liveness_check
+      title: Selfie + liveness
+      tool: check_liveness
+      collects: []
+      description: >
+        Capture a selfie and confirm the person is live and present
+        (passive liveness / injection-attack detection).
+
+    - id: face_match
+      title: Face match
+      tool: match_face
+      collects: []
+      description: Biometrically compare the selfie to the document portrait.
+
+    - id: aml_screening
+      title: Sanctions / PEP screening
+      tool: run_aml_screening
+      collects: []
+      description: Screen the verified identity against watchlists.
+
+    - id: decision
+      title: Onboarding decision
+      tool: finalize_decision
+      collects: []
+      description: Combine all signals into an approve / refer / decline decision.
+
+# Tunable mock behaviour. Demo presenters can force a failure on a given
+# step by typing a phrase containing the step's "fail_keyword" so they can
+# show retries and the pause/resume story.
+mock:
+  default_outcome: pass
+  document_confidence: 0.97
+  liveness_score: 0.99
+  face_match_score: 0.96
+  fail_keywords:
+    document_verification: "blurry"
+    liveness_check: "spoof"
+    face_match: "mismatch"

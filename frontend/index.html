@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eKYC Onboarding Demo</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="logo" id="logo">IDV</span>
+      <div>
+        <h1 id="product-name">Identity Onboarding Studio</h1>
+        <p id="tagline">Agentic eKYC powered by Amazon Bedrock AgentCore</p>
+      </div>
+    </div>
+    <div class="runtime-badges">
+      <span class="badge" id="agent-badge">agent: …</span>
+      <span class="badge" id="model-badge">model: …</span>
+      <span class="badge" id="memory-badge">memory: …</span>
+      <span class="badge" id="region-badge">region: …</span>
+    </div>
+  </header>
+
+  <section class="controls">
+    <div class="field">
+      <label>Tenant (SaaS customer)</label>
+      <select id="tenant"></select>
+    </div>
+    <div class="field">
+      <label>End user (applicant)</label>
+      <select id="user"></select>
+    </div>
+    <button id="start-btn">Start / Resume</button>
+    <button id="newattempt-btn" class="ghost">New attempt</button>
+    <div class="session-info" id="session-info"></div>
+  </section>
+
+  <main>
+    <!-- Chat -->
+    <div class="panel chat-panel">
+      <h2>Onboarding conversation</h2>
+      <div id="chat" class="chat"></div>
+      <form id="chat-form" autocomplete="off">
+        <input id="msg" placeholder="Type a reply (e.g. 'My name is Alice, born 1990-05-12, Ireland')" />
+        <button type="submit" id="send-btn">Send</button>
+      </form>
+      <p class="hint">Tip: type words like <code>blurry</code>, <code>spoof</code> or
+        <code>mismatch</code> to force a step failure and show a retry.</p>
+    </div>
+
+    <!-- Right column -->
+    <div class="col">
+      <div class="panel">
+        <h2>Onboarding progress <span class="sub">(tool calls → persisted in AgentCore Memory)</span></h2>
+        <ul id="steps" class="steps"></ul>
+        <div id="decision" class="decision"></div>
+        <p class="hint">Steps are advanced by the agent's verification <b>tool calls</b>
+          (see the <b>Observability</b> trace). The resulting progress is persisted
+          in <b>AgentCore Memory</b>, so you can pause and resume.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Tenant isolation</h2>
+        <p class="sub">actorId = <code id="actor-id">—</code></p>
+        <button id="isolation-btn" class="ghost">Try cross-tenant memory read</button>
+        <pre id="isolation-out" class="out"></pre>
+      </div>
+
+      <div class="panel">
+        <h2>Observability <span class="sub">(last turn trace)</span></h2>
+        <div id="trace" class="trace"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
